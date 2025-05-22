@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小羊大王</title>
+    <style>
+        body {
+            background: #ffe6f2;
+            font-family: 'Comic Sans MS', cursive;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(255,130,170,0.3);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .header h1 {
+            color: #ff69b4;
+            margin: 0;
+            font-size: 2.5em;
+        }
+
+        .kitty-ears::before,
+        .kitty-ears::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            width: 30px;
+            height: 40px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .kitty-ears::before {
+            left: 30%;
+            transform: rotate(-30deg);
+        }
+
+        .kitty-ears::after {
+            right: 30%;
+            transform: rotate(30deg);
+        }
+
+        .upload-area {
+            background: white;
+            border: 4px dashed #ffb3d9;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-btn {
+            background: #ff69b4;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 10px;
+        }
+
+        .photo-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255,105,180,0.2);
+            transition: transform 0.3s;
+        }
+
+        .photo-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 爱心装饰 */
+        .heart-deco {
+            position: fixed;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header kitty-ears">
+        <h1>小羊大王</h1>
+    </div>
+
+    <div class="upload-area">
+        <label for="fileInput" class="upload-btn">
+            📷 上传可爱照片
+        </label>
+        <input type="file" id="fileInput" accept="image/*" multiple>
+        <p>点击上传或拖拽照片到这里</p >
+    </div>
+
+    <div class="gallery" id="gallery"></div>
+
+    <script>
+        const gallery = document.getElementById('gallery');
+        const fileInput = document.getElementById('fileInput');
+
+        // 处理文件选择
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+
+        // 处理拖拽上传
+        document.addEventListener('dragover', e => e.preventDefault());
+        document.addEventListener('drop', e => {
+            e.preventDefault();
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            [...files].forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        const photoItem = document.createElement('div');
+                        photoItem.className = 'photo-item';
+                        photoItem.appendChild(img);
+                        gallery.appendChild(photoItem);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // 添加随机爱心装饰
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.className = 'heart-deco';
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animation = `float ${Math.random() * 3 + 2}s infinite`;
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 5000);
+        }
+
+        setInterval(createHeart, 1000);
+    </script>
+</body>
+</html>
